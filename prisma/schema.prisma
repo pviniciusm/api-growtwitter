@@ -9,3 +9,46 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id String @id @db.Uuid @default(uuid())
+  name String
+  username String @unique
+  password String
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  tweets Tweet[]
+  likes Like[]
+
+  @@map("user")
+}
+
+model Tweet {
+  id String @id @db.Uuid @default(uuid())
+  content String
+  type String @db.Char(1)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  idUser String @db.Uuid @map("id_user")
+  user User @relation(fields: [idUser], references: [id])
+
+  likes Like[]
+
+  @@map("tweet")
+}
+
+model Like {
+  idUser String @db.Uuid @map("id_user")
+  idTweet String @db.Uuid @map("id_tweet")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [idUser], references: [id])
+  tweet Tweet @relation(fields: [idTweet], references: [id])
+
+  @@id([idTweet, idUser])
+}
