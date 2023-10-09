@@ -28,7 +28,10 @@ class UserService {
         const user = new User(data.name, data.username, data.password);
 
         const result = await repository.user.create({
-            data,
+            data: {
+                ...data,
+                id: user.id,
+            },
         });
 
         return {
