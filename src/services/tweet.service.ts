@@ -33,6 +33,7 @@ class TweetService {
             },
             include: {
                 likes: true,
+                user: true,
             },
         });
 
@@ -124,6 +125,66 @@ class TweetService {
         return {
             code: 200,
             message: "Tweet successfully liked",
+            data: result,
+        };
+    }
+
+    public async dislike(data: LikeTweetDto): Promise<Result> {
+        // Check if user exists
+        const user = await repository.user.findUnique({
+            where: {
+                id: data.idUser,
+            },
+        });
+
+        if (!user) {
+            return {
+                code: 404,
+                message: "User does not exist",
+            };
+        }
+
+        // Check if tweet exists
+        const tweet = await repository.tweet.findUnique({
+            where: {
+                id: data.idTweet,
+            },
+        });
+
+        if (!tweet) {
+            return {
+                code: 404,
+                message: "Tweet does not exist",
+            };
+        }
+
+        // Check if tweet was already liked by user
+        const existentLike = await repository.like.findFirst({
+            where: {
+                idTweet: data.idTweet,
+                idUser: data.idUser,
+            },
+        });
+
+        if (!existentLike) {
+            return {
+                code: 404,
+                message: "Like does not exist",
+            };
+        }
+
+        const result = await repository.like.delete({
+            where: {
+                idTweet_idUser: {
+                    idTweet: data.idTweet,
+                    idUser: data.idUser,
+                },
+            },
+        });
+
+        return {
+            code: 200,
+            message: "Tweet successfully disliked",
             data: result,
         };
     }

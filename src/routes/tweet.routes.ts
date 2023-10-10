@@ -9,6 +9,7 @@ export const tweetRoutes = () => {
     router.get("/", new TweetController().list);
     router.post("/", new TweetController().create);
     router.post("/:idTweet/like", new TweetController().like);
+    router.delete("/:idTweet/like", new TweetController().dislike);
 
     return router;
 };

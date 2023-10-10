@@ -65,6 +65,7 @@ class UserService {
         return {
             code: 200,
             message: "User successfully logged",
+            data: user,
         };
     }
 }

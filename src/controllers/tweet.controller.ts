@@ -51,4 +51,19 @@ export class TweetController {
             return res.status(500).send(error.toString());
         }
     }
+
+    public async dislike(req: Request, res: Response) {
+        try {
+            const { idUser, idTweet } = req.params;
+
+            const result = await tweetService.dislike({
+                idUser,
+                idTweet,
+            });
+
+            return res.status(result.code).send(result);
+        } catch (error: any) {
+            return res.status(500).send(error.toString());
+        }
+    }
 }
