@@ -28,12 +28,12 @@ class TweetService {
         }
 
         const result = await repository.tweet.findMany({
-            where: {
-                idUser,
-            },
             include: {
                 likes: true,
                 user: true,
+            },
+            orderBy: {
+                createdAt: "desc",
             },
         });
 
