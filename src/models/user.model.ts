@@ -6,7 +6,8 @@ export class User {
     constructor(
         public name: string,
         public username: string,
-        public password: string
+        public password: string,
+        public imgUrl?: string
     ) {
         this.id = v4();
     }
@@ -16,6 +17,7 @@ export class User {
             id: this.id,
             name: this.name,
             username: this.username,
+            imgUrl: this.imgUrl,
         };
     }
 }

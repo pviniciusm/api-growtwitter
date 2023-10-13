@@ -33,7 +33,7 @@ class TweetService {
                 user: true,
             },
             orderBy: {
-                createdAt: "desc",
+                updatedAt: "desc",
             },
         });
 

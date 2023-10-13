@@ -14,7 +14,7 @@ export class UserController {
 
     public async create(req: Request, res: Response) {
         try {
-            const { name, username, password } = req.body;
+            const { name, username, password, imgUrl } = req.body;
 
             if (!name || !username || !password) {
                 return res.status(400).send({

@@ -6,6 +6,7 @@ interface CreateUserDto {
     username: string;
     password: string;
     name: string;
+    imgUrl?: string;
 }
 
 interface CheckCredentialsDto {
@@ -25,7 +26,12 @@ class UserService {
     }
 
     public async create(data: CreateUserDto): Promise<Result> {
-        const user = new User(data.name, data.username, data.password);
+        const user = new User(
+            data.name,
+            data.username,
+            data.password,
+            data.imgUrl
+        );
 
         const result = await repository.user.create({
             data: {
