@@ -1,6 +1,7 @@
 import repository from "../database/prisma.database";
 import { Result } from "../dtos/result.dto";
 import { User } from "../models/user.model";
+import { TokenService } from "./jwt.service";
 
 interface CreateUserDto {
     username: string;
@@ -68,10 +69,17 @@ class UserService {
             };
         }
 
+        const token = TokenService.create({
+            id: user.id,
+        });
+
         return {
             code: 200,
             message: "User successfully logged",
-            data: user,
+            data: {
+                ...user,
+                token,
+            },
         };
     }
 }
