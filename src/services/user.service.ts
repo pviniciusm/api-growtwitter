@@ -15,6 +15,11 @@ interface CheckCredentialsDto {
     password: string;
 }
 
+interface FollowUserDto {
+    idUser: string;
+    idFollowedUser: string;
+}
+
 class UserService {
     public async list(): Promise<Result> {
         const result = await repository.user.findMany();
@@ -80,6 +85,64 @@ class UserService {
                 ...user,
                 token,
             },
+        };
+    }
+
+    public async follow(data: FollowUserDto): Promise<Result> {
+        // 1- check if users exist
+        const user = await repository.user.findUnique({
+            where: {
+                id: data.idUser,
+            },
+            include: {
+                following: true,
+            },
+        });
+
+        if (!user) {
+            return {
+                code: 404,
+                message: "User not found",
+            };
+        }
+
+        const followedUser = await repository.user.findFirst({
+            where: {
+                id: data.idFollowedUser,
+            },
+        });
+
+        if (!followedUser) {
+            return {
+                code: 404,
+                message: "User not found",
+            };
+        }
+
+        // 2 - check if user already follows followedUser
+        if (
+            user.following.some(
+                (follower) => follower.idFollowedUser == data.idFollowedUser
+            )
+        ) {
+            return {
+                code: 400,
+                message: `User (${user.id}) already follows user (${data.idFollowedUser})`,
+            };
+        }
+
+        // 3- create a follower register
+        const follow = await repository.follower.create({
+            data: {
+                idUser: data.idUser,
+                idFollowedUser: data.idFollowedUser,
+            },
+        });
+
+        return {
+            code: 201,
+            data: follow,
+            message: "User successfully followed",
         };
     }
 }
