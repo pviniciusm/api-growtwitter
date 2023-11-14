@@ -7,7 +7,8 @@ export const tweetRoutes = () => {
         mergeParams: true,
     });
 
-    router.get("/", [AuthMiddleware.checkUser], new TweetController().list);
+    router.get("/", new TweetController().list);
+    router.get("/feed", new TweetController().showFeed);
     router.post("/", [AuthMiddleware.checkUser], new TweetController().create);
     router.post(
         "/:idTweet/like",
@@ -18,6 +19,11 @@ export const tweetRoutes = () => {
         "/:idTweet/like",
         [AuthMiddleware.checkUser],
         new TweetController().dislike
+    );
+    router.post(
+        "/reply/:idTweet",
+        [AuthMiddleware.checkUser],
+        new TweetController().reply
     );
 
     return router;

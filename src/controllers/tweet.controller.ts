@@ -14,6 +14,18 @@ export class TweetController {
         }
     }
 
+    public async showFeed(req: Request, res: Response) {
+        try {
+            const { idUser } = req.params;
+
+            const result = await tweetService.showFeed(idUser);
+
+            return res.status(result.code).send(result);
+        } catch (error: any) {
+            return res.status(500).send(error.toString());
+        }
+    }
+
     public async create(req: Request, res: Response) {
         try {
             const { content } = req.body;
@@ -58,6 +70,30 @@ export class TweetController {
 
             const result = await tweetService.dislike({
                 idUser,
+                idTweet,
+            });
+
+            return res.status(result.code).send(result);
+        } catch (error: any) {
+            return res.status(500).send(error.toString());
+        }
+    }
+
+    public async reply(req: Request, res: Response) {
+        try {
+            const { content } = req.body;
+            const { idUser, idTweet } = req.params;
+
+            if (!content) {
+                return res.status(400).send({
+                    code: 400,
+                    message: "Fields not provided (content)",
+                });
+            }
+
+            const result = await tweetService.reply({
+                idUser,
+                content,
                 idTweet,
             });
 

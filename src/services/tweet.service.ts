@@ -12,6 +12,10 @@ interface LikeTweetDto {
     idTweet: string;
 }
 
+interface ReplyTweetDto extends CreateTweetDto {
+    idTweet: string;
+}
+
 class TweetService {
     public async list(idUser: string): Promise<Result> {
         const user = await repository.user.findFirst({
@@ -28,9 +32,13 @@ class TweetService {
         }
 
         const result = await repository.tweet.findMany({
+            where: {
+                id: idUser,
+            },
             include: {
                 likes: true,
                 user: true,
+                replies: true,
             },
             orderBy: {
                 updatedAt: "desc",
@@ -41,6 +49,53 @@ class TweetService {
             code: 200,
             message: "Tweets successfully listed",
             data: result,
+        };
+    }
+
+    public async showFeed(idUser: string): Promise<Result> {
+        const user = await repository.user.findFirst({
+            where: {
+                id: idUser,
+            },
+            include: {
+                following: true,
+            },
+        });
+
+        if (!user) {
+            return {
+                code: 404,
+                message: "User does not exist",
+            };
+        }
+
+        const result = await repository.tweet.findMany({
+            where: {
+                type: "N",
+            },
+            include: {
+                likes: true,
+                replies: true,
+            },
+            orderBy: {
+                updatedAt: "desc",
+            },
+        });
+
+        const feed = result.filter((item) => {
+            if (item.idUser == user.id) {
+                return true;
+            }
+
+            return user.following.some(
+                (follow) => follow.idUser == item.idUser
+            );
+        });
+
+        return {
+            code: 200,
+            message: "Tweets successfully listed",
+            data: feed,
         };
     }
 
@@ -185,6 +240,60 @@ class TweetService {
         return {
             code: 200,
             message: "Tweet successfully disliked",
+            data: result,
+        };
+    }
+
+    public async reply(data: ReplyTweetDto) {
+        const user = await repository.user.findUnique({
+            where: {
+                id: data.idUser,
+            },
+        });
+
+        if (!user) {
+            return {
+                code: 404,
+                message: "User does not exist",
+            };
+        }
+
+        // Check if tweet exists
+        const tweet = await repository.tweet.findUnique({
+            where: {
+                id: data.idTweet,
+            },
+        });
+
+        if (!tweet) {
+            return {
+                code: 404,
+                message: "Tweet does not exist",
+            };
+        }
+
+        if (tweet.type !== "N") {
+            return {
+                code: 400,
+                message: "Replies are only allowed to normal tweets",
+            };
+        }
+
+        const reply = new Tweet(data.content, TweetType.Reply);
+
+        const result = await repository.tweet.create({
+            data: {
+                id: reply.id,
+                type: reply.type,
+                content: reply.content,
+                idUser: user.id,
+                repliedTweetId: data.idTweet,
+            },
+        });
+
+        return {
+            code: 201,
+            message: "Reply successfully created",
             data: result,
         };
     }
