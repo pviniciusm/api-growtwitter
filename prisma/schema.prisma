@@ -33,13 +33,19 @@ model User {
 model Tweet {
   id String @id @db.Uuid @default(uuid())
   content String
-  type String @db.Char(1)
+  type String @db.Char(1) @default("N")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   idUser String @db.Uuid @map("id_user")
   user User @relation(fields: [idUser], references: [id])
+
+  // if tweet is a reply,  
+  repliedTweetId String? @db.Uuid
+  repliedTweet Tweet? @relation(fields: [repliedTweetId], references: [id], name: "replies")
+
+  replies Tweet[] @relation(name: "replies")
 
   likes Like[]
 
