@@ -1,0 +1,91 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "API Growtwitter",
+        "description": "Growtwitter is a social media application where users can send tweets and interact with other users",
+        "version": "1.0.0"
+    },
+    "tags": [
+        {
+            "name": "user"
+        },
+        {
+            "name": "tweet"
+        }
+    ],
+    "paths": {
+        "/user": {
+            "description": "router for users",
+            "get": {
+                "description": "List all users",
+                "parameters": [],
+                "tags": ["user"],
+                "responses": {
+                    "200": {
+                        "description": "Users successfully listed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/apiResponse"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/user"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "user": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "username": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    },
+                    "imgUrl": {
+                        "type": "string"
+                    }
+                }
+            },
+            "apiResponse": {
+                "type": "object",
+                "properties": {
+                    "ok": {
+                        "type": "boolean"
+                    },
+                    "code": {
+                        "type": "number"
+                    },
+                    "message": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}
