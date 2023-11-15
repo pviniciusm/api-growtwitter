@@ -22,4 +22,12 @@ export class DataHelper {
             updatedAt: new Date(),
         };
     }
+
+    public static get existentLike() {
+        return {
+            idTweet: this.existentTweet.id,
+            idUser: this.existentUser.id,
+            createdAt: new Date(),
+        };
+    }
 }

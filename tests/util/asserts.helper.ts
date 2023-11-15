@@ -13,6 +13,11 @@ export class Assert {
         expect(result.data).not.toBeDefined();
     }
 
+    public static genericError(result: Result) {
+        expect(result.code).toEqual(400);
+        expect(result.data).not.toBeDefined();
+    }
+
     public static inavlidCredentials(result: Result) {
         expect(result.code).toEqual(401);
         expect(result.message).toEqual("Invalid username or password");
