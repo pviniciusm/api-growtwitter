@@ -9,7 +9,7 @@ export class Assert {
 
     public static notFoundError(result: Result) {
         expect(result.code).toEqual(404);
-        expect(result.message).toContain("not found");
+        expect(result.message).toContain("not exist");
         expect(result.data).not.toBeDefined();
     }
 
