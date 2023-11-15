@@ -10,7 +10,7 @@
         "postinstall": "npm run build",
         "test": "jest",
         "test:watch": "jest --silent --watchAll",
-        "test: coverage": "jest --coverage"
+        "test:coverage": "jest --coverage"
     },
     "keywords": [],
     "author": "",
