@@ -1,24 +1,7 @@
 import userService from "../../src/services/user.service";
 import { Result } from "../../src/dtos/result.dto";
 import { prismaMock } from "../config/prisma.mock";
-
-function success(result: Result) {
-    expect(result.code).toBeGreaterThanOrEqual(200);
-    expect(result.code).toBeLessThan(300);
-    expect(result.data).toBeDefined();
-}
-
-function notFoundError(result: Result) {
-    expect(result.code).toEqual(404);
-    expect(result.message).toContain("not found");
-    expect(result.data).not.toBeDefined();
-}
-
-function inavlidCredentials(result: Result) {
-    expect(result.code).toEqual(401);
-    expect(result.message).toEqual("Invalid username or password");
-    expect(result.data).not.toBeDefined();
-}
+import { Assert } from "../util/asserts.helper";
 
 const existentUser = {
     id: "123",
@@ -42,7 +25,7 @@ describe("List users unitary tests", () => {
 
         const result = await userService.list();
 
-        success(result);
+        Assert.success(result);
         expect(result).toHaveProperty("data", []);
     });
 
@@ -54,7 +37,7 @@ describe("List users unitary tests", () => {
 
         const result = await userService.list();
 
-        success(result);
+        Assert.success(result);
         expect(result).toHaveProperty("data");
         expect(result.data).toHaveLength(users.length);
         expect(result.data[0]).toEqual(existentUser);
@@ -76,7 +59,7 @@ describe("Check login unitary tests", () => {
             password: "12345",
         });
 
-        inavlidCredentials(result);
+        Assert.inavlidCredentials(result);
     });
 
     test("should return error if passwords don't match", async () => {
@@ -88,7 +71,7 @@ describe("Check login unitary tests", () => {
             password: "invalid_password",
         });
 
-        inavlidCredentials(result);
+        Assert.inavlidCredentials(result);
     });
 
     test("should return error if passwords don't match", async () => {
@@ -100,7 +83,7 @@ describe("Check login unitary tests", () => {
             password: existentUser.password,
         });
 
-        success(result);
+        Assert.success(result);
         expect(result).toHaveProperty("data.token");
     });
 });
