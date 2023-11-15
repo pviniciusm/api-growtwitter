@@ -48,6 +48,167 @@
                     }
                 }
             }
+        },
+        "/user/auth": {
+            "description": "Login routes",
+            "post": {
+                "description": "Submit a login request",
+
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": ["user"],
+                "responses": {
+                    "200": {
+                        "description": "Login successfully done",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/successApiResponse"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "string"
+                                                        },
+                                                        "token": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Fields were not provided",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/errorApiResponse"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "[Field] was not provided"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/unauthorized"
+                    }
+                }
+            }
+        },
+        "/user/{userId}/tweet": {
+            "get": {
+                "description": "List all tweets from user",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Auth token provided by login",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "tags": ["tweet"],
+                "responses": {
+                    "200": {
+                        "description": "Tweets successfully listed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/successApiResponse"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/tweet"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/errorApiResponse"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "User was not found"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/unauthorized"
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -72,6 +233,23 @@
                     }
                 }
             },
+            "tweet": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "idUser": {
+                        "type": "string"
+                    },
+                    "content": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "type": "string"
+                    }
+                }
+            },
             "apiResponse": {
                 "type": "object",
                 "properties": {
@@ -83,6 +261,63 @@
                     },
                     "message": {
                         "type": "string"
+                    }
+                }
+            },
+            "successApiResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/apiResponse"
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "ok": {
+                                "type": "boolean",
+                                "example": true
+                            }
+                        }
+                    }
+                ]
+            },
+            "errorApiResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/apiResponse"
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "ok": {
+                                "type": "boolean",
+                                "example": false
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        "responses": {
+            "unauthorized": {
+                "description": "User has invalid credentials",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/components/schemas/errorApiResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Invalid credentials"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
                     }
                 }
             }
