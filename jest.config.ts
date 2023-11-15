@@ -33,6 +33,8 @@ const config: Config = {
     // Indicates which provider should be used to instrument code for coverage
     coverageProvider: "v8",
 
+    setupFilesAfterEnv: ["<rootDir>/tests/config/prisma.mock.ts"],
+
     // A list of reporter names that Jest uses when writing coverage reports
     // coverageReporters: [
     //   "json",
