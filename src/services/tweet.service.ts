@@ -126,6 +126,7 @@ class TweetService {
         return {
             code: 201,
             message: "Tweet successfully created",
+            data: result,
         };
     }
 
