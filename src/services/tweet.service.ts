@@ -33,11 +33,15 @@ class TweetService {
 
         const result = await repository.tweet.findMany({
             where: {
-                id: idUser,
+                idUser: idUser,
             },
             include: {
                 likes: true,
-                user: true,
+                user: {
+                    include: {
+                        followers: true,
+                    },
+                },
                 replies: true,
             },
             orderBy: {
@@ -75,7 +79,13 @@ class TweetService {
             },
             include: {
                 likes: true,
-                replies: true,
+                replies: {
+                    include: {
+                        user: true,
+                        likes: true,
+                    },
+                },
+                user: true,
             },
             orderBy: {
                 updatedAt: "desc",
@@ -88,7 +98,7 @@ class TweetService {
             }
 
             return user.following.some(
-                (follow) => follow.idUser == item.idUser
+                (follow) => follow.idFollowedUser == item.idUser
             );
         });
 
