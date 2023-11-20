@@ -255,6 +255,48 @@ class TweetService {
         };
     }
 
+    public async delete(data: LikeTweetDto): Promise<Result> {
+        // Check if user exists
+        const user = await repository.user.findUnique({
+            where: {
+                id: data.idUser,
+            },
+        });
+
+        if (!user) {
+            return {
+                code: 404,
+                message: "User does not exist",
+            };
+        }
+
+        // Check if tweet exists
+        const tweet = await repository.tweet.findUnique({
+            where: {
+                id: data.idTweet,
+            },
+        });
+
+        if (!tweet) {
+            return {
+                code: 404,
+                message: "Tweet does not exist",
+            };
+        }
+
+        const result = await repository.tweet.delete({
+            where: {
+                id: data.idTweet,
+            },
+        });
+
+        return {
+            code: 200,
+            message: "Tweet successfully deleted",
+            data: result,
+        };
+    }
+
     public async reply(data: ReplyTweetDto) {
         const user = await repository.user.findUnique({
             where: {

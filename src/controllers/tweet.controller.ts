@@ -79,6 +79,21 @@ export class TweetController {
         }
     }
 
+    public async delete(req: Request, res: Response) {
+        try {
+            const { idUser, idTweet } = req.params;
+
+            const result = await tweetService.delete({
+                idUser,
+                idTweet,
+            });
+
+            return res.status(result.code).send(result);
+        } catch (error: any) {
+            return res.status(500).send(error.toString());
+        }
+    }
+
     public async reply(req: Request, res: Response) {
         try {
             const { content } = req.body;

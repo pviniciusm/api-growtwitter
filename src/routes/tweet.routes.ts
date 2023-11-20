@@ -10,6 +10,11 @@ export const tweetRoutes = () => {
     router.get("/", new TweetController().list);
     router.get("/feed", new TweetController().showFeed);
     router.post("/", [AuthMiddleware.checkUser], new TweetController().create);
+    router.delete(
+        "/:idTweet",
+        [AuthMiddleware.checkUser],
+        new TweetController().dislike
+    );
     router.post(
         "/:idTweet/like",
         [AuthMiddleware.checkUser],
