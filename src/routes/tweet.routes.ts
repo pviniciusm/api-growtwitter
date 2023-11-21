@@ -13,7 +13,7 @@ export const tweetRoutes = () => {
     router.delete(
         "/:idTweet",
         [AuthMiddleware.checkUser],
-        new TweetController().dislike
+        new TweetController().delete
     );
     router.post(
         "/:idTweet/like",

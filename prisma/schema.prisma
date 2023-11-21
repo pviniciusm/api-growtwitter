@@ -43,7 +43,7 @@ model Tweet {
 
   // if tweet is a reply,  
   repliedTweetId String? @db.Uuid
-  repliedTweet Tweet? @relation(fields: [repliedTweetId], references: [id], name: "replies")
+  repliedTweet Tweet? @relation(fields: [repliedTweetId], references: [id], name: "replies", onDelete: Cascade)
 
   replies Tweet[] @relation(name: "replies")
 
@@ -59,7 +59,7 @@ model Like {
   createdAt DateTime @default(now()) @map("created_at")
 
   user User @relation(fields: [idUser], references: [id])
-  tweet Tweet @relation(fields: [idTweet], references: [id])
+  tweet Tweet @relation(fields: [idTweet], references: [id], onDelete: Cascade)
 
   @@id([idTweet, idUser])
   
