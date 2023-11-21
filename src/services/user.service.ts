@@ -145,6 +145,66 @@ class UserService {
             message: "User successfully followed",
         };
     }
+
+    public async unfollow(data: FollowUserDto): Promise<Result> {
+        // 1- check if users exist
+        const user = await repository.user.findUnique({
+            where: {
+                id: data.idUser,
+            },
+            include: {
+                following: true,
+            },
+        });
+
+        if (!user) {
+            return {
+                code: 404,
+                message: "User not found",
+            };
+        }
+
+        const followedUser = await repository.user.findFirst({
+            where: {
+                id: data.idFollowedUser,
+            },
+        });
+
+        if (!followedUser) {
+            return {
+                code: 404,
+                message: "User not found",
+            };
+        }
+
+        // 2 - check if user already follows followedUser
+        if (
+            !user.following.some(
+                (follower) => follower.idFollowedUser == data.idFollowedUser
+            )
+        ) {
+            return {
+                code: 404,
+                message: `User (${user.id}) does not follow user (${data.idFollowedUser})`,
+            };
+        }
+
+        // 3- create a follower register
+        const follow = await repository.follower.delete({
+            where: {
+                idFollowedUser_idUser: {
+                    idFollowedUser: data.idFollowedUser,
+                    idUser: data.idUser,
+                },
+            },
+        });
+
+        return {
+            code: 201,
+            data: follow,
+            message: "User successfully followed",
+        };
+    }
 }
 
 export default new UserService();

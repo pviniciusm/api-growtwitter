@@ -12,6 +12,11 @@ export const followerRoutes = () => {
         [AuthMiddleware.checkUser],
         new FollowerController().follow
     );
+    router.delete(
+        "/:idFollowedUser",
+        [AuthMiddleware.checkUser],
+        new FollowerController().unfollow
+    );
 
     return router;
 };

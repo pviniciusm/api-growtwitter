@@ -16,4 +16,19 @@ export class FollowerController {
             return res.status(500).send(error.toString());
         }
     }
+
+    public async unfollow(req: Request, res: Response) {
+        try {
+            const { idUser, idFollowedUser } = req.params;
+
+            const result = await userService.unfollow({
+                idUser,
+                idFollowedUser,
+            });
+
+            return res.status(result.code).send(result);
+        } catch (error: any) {
+            return res.status(500).send(error.toString());
+        }
+    }
 }
