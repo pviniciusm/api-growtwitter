@@ -3,6 +3,7 @@ import userService from "../services/user.service";
 
 export class UserController {
     public async list(req: Request, res: Response) {
+        // #swagger.tags = ['User']
         try {
             const result = await userService.list();
 
@@ -13,14 +14,14 @@ export class UserController {
     }
 
     public async create(req: Request, res: Response) {
+        // #swagger.tags = ['User']
         try {
             const { name, username, password, imgUrl } = req.body;
 
             if (!name || !username || !password) {
                 return res.status(400).send({
                     code: 400,
-                    message:
-                        "Fields not provided (name, username and password)",
+                    message: "Fields not provided (name, username and password)",
                 });
             }
 
@@ -33,6 +34,7 @@ export class UserController {
     }
 
     public async login(req: Request, res: Response) {
+        // #swagger.tags = ['User']
         try {
             const { username, password } = req.body;
 
@@ -43,7 +45,7 @@ export class UserController {
                 });
             }
 
-            const result = await userService.checkCredentials(req.body);
+            const result = await userService.login(req.body);
 
             return res.status(result.code).send(result);
         } catch (error: any) {

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { UserController } from "../controllers/user.controller";
 import { tweetRoutes } from "./tweet.routes";
+import { checkUserMiddleware } from "./user.middleware";
 
 export const userRoutes = () => {
     const router = Router();
@@ -10,7 +11,7 @@ export const userRoutes = () => {
     router.post("/auth", new UserController().login);
 
     // Tweet routes
-    router.use("/:idUser/tweet", tweetRoutes());
+    router.use("/:idUser/tweet", [checkUserMiddleware], tweetRoutes());
 
     return router;
 };
