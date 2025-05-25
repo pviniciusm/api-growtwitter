@@ -4,7 +4,7 @@ import { User } from "../models/user.model";
 import { hashSync, compareSync } from "bcryptjs";
 import { AuthService } from "./auth.service";
 
-interface CreateUserDto {
+export interface CreateUserDto {
     username: string;
     password: string;
     name: string;
@@ -16,7 +16,7 @@ interface CheckCredentialsDto {
     password: string;
 }
 
-class UserService {
+export class UserService {
     public async list(): Promise<Result> {
         const result = await repository.user.findMany();
 
@@ -28,6 +28,21 @@ class UserService {
     }
 
     public async create(data: CreateUserDto): Promise<Result> {
+        if (data.password.length < 5) {
+            return {
+                code: 400,
+                message: "A senha deve ter pelo menos 5 caracteres",
+            };
+        }
+
+        const duplicatedUser = this.get(data.username);
+        if (duplicatedUser !== null) {
+            return {
+                code: 400,
+                message: "Ja existe um usuario com esse username",
+            };
+        }
+
         const user = new User(data.name, data.username, data.password, data.imgUrl);
 
         const hashedPassword = hashSync(data.password, 8);
@@ -86,6 +101,16 @@ class UserService {
                 token,
             },
         };
+    }
+
+    public async get(username: string) {
+        const user = await repository.user.findUnique({
+            where: {
+                username,
+            },
+        });
+
+        return user;
     }
 }
 
