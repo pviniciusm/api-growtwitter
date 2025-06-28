@@ -28,10 +28,20 @@ class UserService {
     }
 
     public async create(data: CreateUserDto): Promise<Result> {
-        const user = new User(data.name, data.username, data.password, data.imgUrl);
+        // 1- check if user already exists
+        const existentUser = await this.getByUsername(data.username);
+        if(existentUser.code === 200) {
+            return {
+                code: 400,
+                message: "User is already registered"
+            }
+        }
 
+        // 2- create user instance
+        const user = new User(data.name, data.username, data.password, data.imgUrl);
         const hashedPassword = hashSync(data.password, 8);
 
+        // 3- save user in db
         const result = await repository.user.create({
             data: {
                 ...data,
@@ -39,7 +49,7 @@ class UserService {
                 password: hashedPassword,
             },
         });
-
+        
         return {
             code: 201,
             message: "User succsssfully created",
@@ -86,6 +96,27 @@ class UserService {
                 token,
             },
         };
+    }
+
+    public async getByUsername(username: string): Promise<Result> {
+        const user = await repository.user.findUnique({
+            where: {
+                username
+            }
+        });
+
+        if(!user) {
+            return {
+                code: 404,
+                message: "User not found"
+            }
+        }
+
+        return {
+            code: 200,
+            message: "User found",
+            data: user
+        }
     }
 }
 
